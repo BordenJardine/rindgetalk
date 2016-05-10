@@ -1,0 +1,55 @@
+body {
+  font-family: sans-serif;
+}
+
+.title {
+  text-align: center;
+}
+
+.title.draw {
+  color: grey;
+}
+
+.title.win {
+  color: blue;
+}
+
+.title.lose {
+  color: red;
+}
+
+.move {
+  width: 150px;
+  height: 150px;
+  display: inline-block;
+  margin:5px;
+}
+
+.playerMove {
+  border: 5px solid blue;
+}
+
+.serverMove {
+  border: 5px solid red;
+}
+
+.vs {
+  vertical-align: middle;
+  text-align: center;
+  font-size: 35px;
+}
+
+.player-score {
+  color: blue;
+}
+
+.main-container {
+  width: 520px;
+  margin: 0 auto;
+}
+
+.server-score {
+  color: red;
+}
+
+

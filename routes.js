@@ -1,18 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-
-var insertGame = function(game, done) {
-  req.db.collection('games').find({}).sort({number: -1}).toArray((err, games) => {
-    if(err) console.log(err);
-    done(games);
-  });
-}
-
-var renderResults = function(res) {
-
-};
-
 var determineVictor = function(playerMove, serverMove) {
   if(playerMove == 'rock' && serverMove == 'rock') {
     return 'draw';
@@ -42,6 +30,13 @@ var determineVictor = function(playerMove, serverMove) {
     return 'draw';
   }
 };
+
+var insertGame = function(game, done) {
+  req.db.collection('games').find({}).sort({number: -1}).toArray((err, games) => {
+    if(err) console.log(err);
+    done(games);
+  });
+}
 
 var generateServerMove = function() {
   var num = Math.ceil(Math.random() * 3);
@@ -105,13 +100,30 @@ router.post('/game', (req, res) => {
     var victor = determineVictor(playerMove, serverMove);
     var number = games.length;
     insertGame(playerMove, serverMove, victor, number);
-    res.render('result', {winner: 'rock paper scissors'});
+    res.render('results', {winner: 'rock paper scissors'});
   });
 });
 
-router.get('/result', (req, res) => {
-  req.db.collection('games').find({}).sort({number: -1}).toArray((err, games) => {
-    res.render('home', {txt: 'rock paper scissors'});
+router.get('/results', (req, res) => {
+  getGames(req.db, function(games, score) {
+    var mostRecentGame = games[0];
+    var resultText = 'DRAW';
+    var resultClass = 'draw';
+    if(mostRecentGame.winner == 'player') {
+      resultText = 'You WON!'
+      resultClass = 'win';
+    } else if (mostRecentGame.winner == 'server') {
+      resultText = 'The Server W0N!'
+      resultClass = 'lose';
+    }
+    var results = {
+      headerText: resultText,
+      resultClass: resultClass,
+      playerMove: mostRecentGame.player,
+      serverMove: mostRecentGame.server,
+      score: score
+    }
+    res.render('results', results);
   });
 });
 
