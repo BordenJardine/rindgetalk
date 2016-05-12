@@ -1,6 +1,7 @@
 var express = require('express');
 var templates = require('express-handlebars');
 var MongoDB = require('mongodb').MongoClient;
+var bodyParser = require('body-parser');
 
 var app = express();
 var dbUrl = 'mongodb://localhost:27017/rps';
@@ -10,6 +11,8 @@ app.engine('handlebars', templates({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 app.use(express.static('public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 app.use((req,res,next) => {
   req.db = db;
   next();

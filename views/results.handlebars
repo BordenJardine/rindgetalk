@@ -1,11 +1,18 @@
-<h1 class="title">Rock Paper Scissors</h1>
-<h2 class="subtitle">Score</h2>
-<p class="player-score">Player: {{score.player}}</p>
-<p class="server-score">Server: {{score.server}}</p>
+<h1 class="title">Rock Paper Scissors!</h1>
+
+<div class="scoreboard">
+  <h2 class="subtitle">Score:</h2>
+  <p class="player-score">Player: {{score.player}}</p>
+  <p class="server-score">Server: {{score.server}}</p>
+</div>
 
 <div class="results main-container">
-  <h1 class="title resultsHeader {{resultClass}}">{{headerText}}<h1>
+  <h1 class="title resultsHeader {{result}}">{{headerText}}</h1>
+  <img class="robit" src="images/robit-{{result}}.gif" />
   <img class="move playerMove" src="images/{{playerMove}}.png" />
-  <div class="move vs">VS.</div>
+  <div class="move vs">VS</div>
   <img class="move serverMove" src="images/{{serverMove}}.png" />
+  <a  class="continue-link" href="/game">
+    Continue
+  </a>
 </div>

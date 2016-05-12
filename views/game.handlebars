@@ -1,10 +1,20 @@
-<h1 class="title">Rock Paper Scissors</h1>
-<h2 class="subtitle">Score</h2>
-<p class="player-score">Player: {{score.player}}</p>
-<p class="server-score">Server: {{score.server}}</p>
+<h1 class="title">Rock Paper Scissors!</h1>
+<div class="scoreboard">
+  <h2 class="subtitle">Score:</h2>
+  <p class="player-score">Player: {{score.player}}</p>
+  <p class="server-score">Server: {{score.server}}</p>
+</div>
 
 <div class="choices main-container">
+  <h1 class="title">Pick Something</h1>
+  <img class="robit" src="images/robit-draw.gif" />
   <img id="rock" class="move playerMove" src="images/rock.png" />
   <img id="paper" class="move playerMove" src="images/paper.png" />
   <img id="scissors" class="move playerMove" src="images/scissors.png" />
 </div>
+
+<form id="form" action="/game" method="POST">
+  <input id="move" type="hidden" name="move">
+</form>
+
+<script text="text/javascript" src="game.js"></script>

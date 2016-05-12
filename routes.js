@@ -31,12 +31,12 @@ var determineVictor = function(playerMove, serverMove) {
   }
 };
 
-var insertGame = function(game, done) {
-  req.db.collection('games').find({}).sort({number: -1}).toArray((err, games) => {
+var insertGame = function(db, gameInfo, done) {
+  db.collection('games').insertOne(gameInfo, function(err, result) {
     if(err) console.log(err);
-    done(games);
+    if(done) done(result);
   });
-}
+};
 
 var generateServerMove = function() {
   var num = Math.ceil(Math.random() * 3);
@@ -73,6 +73,25 @@ var getScore = function(games) {
   return score;
 };
 
+var getResults = function(games) {
+  var mostRecentGame = games[0];
+  var resultText = 'DRAW';
+  var result = 'draw';
+  if(mostRecentGame.winner == 'player') {
+    resultText = 'You WON!'
+    result = 'win';
+  } else if (mostRecentGame.winner == 'server') {
+    resultText = 'The Server W0N!'
+    result = 'lose';
+  }
+  return {
+    headerText: resultText,
+    result: result,
+    playerMove: mostRecentGame.player,
+    serverMove: mostRecentGame.server,
+  }
+};
+
 var getGames = function(db, done) {
   db.collection('games').find({}).sort({number: -1}).toArray((err, games) => {
     if(err) console.log(err);
@@ -94,35 +113,25 @@ router.get('/game', (req, res) => {
 });
 
 router.post('/game', (req, res) => {
-  getGames(function(games) {
+  getGames(req.db, function(games) {
     var playerMove = req.body.move;
     var serverMove = generateServerMove();
-    var victor = determineVictor(playerMove, serverMove);
-    var number = games.length;
-    insertGame(playerMove, serverMove, victor, number);
-    res.render('results', {winner: 'rock paper scissors'});
+    var gameInfo = {
+      player: playerMove,
+      server: serverMove,
+      winner: determineVictor(playerMove, serverMove),
+      number: games.length + 1
+    };
+    insertGame(req.db, gameInfo, function() {
+      res.redirect('/results');
+    });
   });
 });
 
 router.get('/results', (req, res) => {
   getGames(req.db, function(games, score) {
-    var mostRecentGame = games[0];
-    var resultText = 'DRAW';
-    var resultClass = 'draw';
-    if(mostRecentGame.winner == 'player') {
-      resultText = 'You WON!'
-      resultClass = 'win';
-    } else if (mostRecentGame.winner == 'server') {
-      resultText = 'The Server W0N!'
-      resultClass = 'lose';
-    }
-    var results = {
-      headerText: resultText,
-      resultClass: resultClass,
-      playerMove: mostRecentGame.player,
-      serverMove: mostRecentGame.server,
-      score: score
-    }
+    results = getResults(games);
+    results.score = score;
     res.render('results', results);
   });
 });
